@@ -36,7 +36,7 @@ public class sender {
    // Send the message
    // Close the session
    // Close the connection
-   // QUEUE ---------
+   // QUEUE ------------------------------------------------------------
    QueueConnectionFactory factory = (QueueConnectionFactory) applicationContext.getBean("connectionFactory");
    Queue queue = (Queue) applicationContext.getBean("queue");
    QueueConnection connection = factory.createQueueConnection();
@@ -56,9 +56,8 @@ public class sender {
    test.close();
    connection.close();
    System.out.println("QUEUE : Message send");
-   //Topic-----------
-
-
+   
+   //Topic-----------------------------------
    Topic topic = (Topic) applicationContext.getBean("topic");
    TopicConnectionFactory topicfactory = (TopicConnectionFactory) applicationContext.getBean("connectionFactory");
    TopicConnection topicconnection = topicfactory.createTopicConnection();

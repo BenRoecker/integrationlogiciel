@@ -49,7 +49,9 @@ public class receiver {
    }*/   // It didn't work with 2 receiver
    test.close();
    connection.close();
-   // changement 
+
+   
+   // TOPIC--------------------------------------------------------------------
    Topic topic = (Topic) applicationContext.getBean("topic");
    TopicConnectionFactory topicfactory = (TopicConnectionFactory) applicationContext.getBean("connectionFactory");
    TopicConnection topicconnection = topicfactory.createTopicConnection();
