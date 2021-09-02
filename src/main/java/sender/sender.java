@@ -36,7 +36,7 @@ public class sender {
    // Send the message
    // Close the session
    // Close the connection
-   // QUEUE -----
+   // QUEUE ---------
    QueueConnectionFactory factory = (QueueConnectionFactory) applicationContext.getBean("connectionFactory");
    Queue queue = (Queue) applicationContext.getBean("queue");
    QueueConnection connection = factory.createQueueConnection();
@@ -45,21 +45,39 @@ public class sender {
    QueueSender sender = test.createSender(queue);
    TextMessage message = test.createTextMessage("Bonjour camarade de la queue !");
    sender.send(message);
+   try{
+    QueueSender sender2 = test.createSender(queue);
+    TextMessage message2 = test.createTextMessage("Bonjour camarade de la queue from another sender!");
+    sender2.send(message2);
+    System.out.println("QUEUE : Message send");
+   }catch(Exception e){
+    System.out.println(e.getMessage());
+   }
    test.close();
    connection.close();
    System.out.println("QUEUE : Message send");
    //Topic-----------
+
+
    Topic topic = (Topic) applicationContext.getBean("topic");
    TopicConnectionFactory topicfactory = (TopicConnectionFactory) applicationContext.getBean("connectionFactory");
    TopicConnection topicconnection = topicfactory.createTopicConnection();
-   TopicSession topicsession = topicconnection.createTopicSession(false, 3);
+   topicconnection.start();
+   TopicSession topicsession = topicconnection.createTopicSession(false, 2);
    TopicPublisher topicpublisher = topicsession.createPublisher(topic);
-   message = test.createTextMessage("Bonjour camarade du topic !");
+   message = topicsession.createTextMessage("Bonjour camarade du topic !");
    topicpublisher.publish(message);
    System.out.println("TOPIC : Message send");
-   topicconnection.close();
+   try{
+    TopicPublisher topicpublisher2 = topicsession.createPublisher(topic);
+    TextMessage message2 = topicsession.createTextMessage("Bonjour camarade du topic ! from another publisher");
+    topicpublisher2.publish(message2);
+    System.out.println("TOPIC : Message send by another publisher");
+   }catch(Exception e){
+    System.out.println(e.getMessage());
+   }
    topicsession.close();
-   // Topic 
+   topicconnection.close();
   } catch (Exception e) {
    e.printStackTrace();
   }

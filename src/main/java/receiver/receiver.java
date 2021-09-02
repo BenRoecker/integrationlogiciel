@@ -39,7 +39,14 @@ public class receiver {
    connection.start();
    QueueReceiver receiver = test.createReceiver(queue);
    TextMessage Textmessage = (TextMessage) receiver.receive();
-   System.out.println("Message from queue :"+Textmessage.getText());
+   System.out.println("Message from queue :" + Textmessage.getText());
+   /*try{
+    QueueReceiver receiver2 = test.createReceiver(queue); 
+    TextMessage Textmessage2 = (TextMessage) receiver2.receive();
+    System.out.println("Message from queue :"+Textmessage2.getText());
+   }catch(Exception e){
+    System.out.println(e.getMessage());
+   }*/   // It didn't work with 2 receiver
    test.close();
    connection.close();
    // changement 
@@ -47,10 +54,18 @@ public class receiver {
    TopicConnectionFactory topicfactory = (TopicConnectionFactory) applicationContext.getBean("connectionFactory");
    TopicConnection topicconnection = topicfactory.createTopicConnection();
    topicconnection.start();
-   TopicSession topicsession = topicconnection.createTopicSession(false, 3);
+   TopicSession topicsession = topicconnection.createTopicSession(false, 2);
    TopicSubscriber topicsubscriber = topicsession.createSubscriber(topic);
    TextMessage textmessage = (TextMessage) topicsubscriber.receive();
-   System.out.println("Message from Topic:"+textmessage.getText());
+   System.out.println("topicsubscriber Message from Topic:"+textmessage.getText());
+   // recevoir 2 message
+   try{
+    TopicSubscriber topicsubscriber2 = topicsession.createSubscriber(topic);
+    TextMessage textmessage2 = (TextMessage) topicsubscriber2.receive();
+    System.out.println("topicsubscriber2 Message from Topic:"+textmessage2.getText());
+   }catch(Exception e){
+    System.out.println(e.getMessage());
+   }
    topicconnection.close();
    topicsession.close();
   } catch (Exception e) {
