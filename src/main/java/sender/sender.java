@@ -1,6 +1,7 @@
 package sender;
 
 import javax.jms.Connection;
+import javax.jms.DeliveryMode;
 import javax.jms.Message;
 import javax.jms.Queue;
 import javax.jms.QueueConnection;
@@ -43,11 +44,15 @@ public class sender {
    QueueSession test = connection.createQueueSession(false, 3);
    connection.start();
    QueueSender sender = test.createSender(queue);
+   sender.setTimeToLive(20000); // time to live
+   sender.setPriority(0);
+   sender.setDeliveryMode(DeliveryMode.PERSISTENT);
    TextMessage message = test.createTextMessage("Bonjour camarade de la queue !");
    sender.send(message);
    try{
     QueueSender sender2 = test.createSender(queue);
     TextMessage message2 = test.createTextMessage("Bonjour camarade de la queue from another sender!");
+    sender2.setPriority(9);
     sender2.send(message2);
     System.out.println("QUEUE : Message send");
    }catch(Exception e){
@@ -62,7 +67,7 @@ public class sender {
    TopicConnectionFactory topicfactory = (TopicConnectionFactory) applicationContext.getBean("connectionFactory");
    TopicConnection topicconnection = topicfactory.createTopicConnection();
    topicconnection.start();
-   TopicSession topicsession = topicconnection.createTopicSession(false, 2);
+   TopicSession topicsession = topicconnection.createTopicSession(true, 2);
    TopicPublisher topicpublisher = topicsession.createPublisher(topic);
    message = topicsession.createTextMessage("Bonjour camarade du topic !");
    topicpublisher.publish(message);
@@ -80,7 +85,5 @@ public class sender {
   } catch (Exception e) {
    e.printStackTrace();
   }
-
  }
-
 }
