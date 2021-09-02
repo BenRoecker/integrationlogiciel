@@ -9,6 +9,11 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicConnection;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
+import javax.jms.Topic;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -34,9 +39,20 @@ public class receiver {
    connection.start();
    QueueReceiver receiver = test.createReceiver(queue);
    TextMessage Textmessage = (TextMessage) receiver.receive();
-   System.out.println(Textmessage.getText());
+   System.out.println("Message from queue :"+Textmessage.getText());
+   test.close();
+   connection.close();
    // changement 
-
+   Topic topic = (Topic) applicationContext.getBean("topic");
+   TopicConnectionFactory topicfactory = (TopicConnectionFactory) applicationContext.getBean("connectionFactory");
+   TopicConnection topicconnection = topicfactory.createTopicConnection();
+   topicconnection.start();
+   TopicSession topicsession = topicconnection.createTopicSession(false, 3);
+   TopicSubscriber topicsubscriber = topicsession.createSubscriber(topic);
+   TextMessage textmessage = (TextMessage) topicsubscriber.receive();
+   System.out.println("Message from Topic:"+textmessage.getText());
+   topicconnection.close();
+   topicsession.close();
   } catch (Exception e) {
    e.printStackTrace();
   }
